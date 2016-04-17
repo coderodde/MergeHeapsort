@@ -1,6 +1,7 @@
 package net.coderodde.util;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  * This class implements merge heap sort.
@@ -23,12 +24,48 @@ public final class MergeHeapsort {
                 scanInputRangeAndComputeStartingIndexArray(array,
                                                            fromIndex,
                                                            toIndex);
+        int numberOfRuns = scanResult.numberOfRuns;
         
-        if (scanResult.numberOfRuns == 1) {
+        if (numberOfRuns == 1) {
             return;
         }
         
-        
+        int[] runStartIndexArray = scanResult.runStartIndexArray;
+        RunIndexHeap heap = new RunIndexHeap(runStartIndexArray, 
+                                             scanResult.numberOfRuns);
+        while (heap.size() > 1) {
+            final int shortestRunIndex = heap.extractShortestRunIndex();
+            final int leftRunLength  = getRunLength(runStartIndexArray,
+                                                    shortestRunIndex - 1,
+                                                    numberOfRuns);
+            
+            final int rightRunLength = getRunLength(runStartIndexArray,
+                                                    shortestRunIndex + 1,
+                                                    numberOfRuns); 
+            
+            if (leftRunLength < rightRunLength) {
+                int leftRunBeginIndex = 
+                        runStartIndexArray[shortestRunIndex - 1];
+                int rightRunBeginIndex = leftRunBeginIndex + leftRunLength;
+                int rightRunEndIndex = rightRunBeginIndex + 
+                        getRunLength(runStartIndexArray, 
+                                     shortestRunIndex, 
+                                     numberOfRuns);
+                
+            } else {
+                
+            }
+        }
+    }
+    
+    private static int getRunLength(int[] runStartIndexArray, int index, int numberOfRuns) {
+        if (index < 0) {
+            return Integer.MAX_VALUE;
+        } else if (index == numberOfRuns) {
+            return Integer.MAX_VALUE;
+        } else {
+            return runStartIndexArray[index + 1] - runStartIndexArray[index];
+        }
     }
     
     private static final class ScanResult {
